@@ -188,6 +188,27 @@
         <li><a href="#" onclick="logout()" class="logout">🚪 Αποσύνδεση</a></li>
     </ul>
 </aside>
+    <script>
+    const dot = document.getElementById('dot');
+    const statusText = document.getElementById('statusText');
+
+    function updateStatus() {
+        if (navigator.onLine) {
+            dot.style.background = '#10b981'; // Πράσινο
+            statusText.innerText = 'Είσαι Online';
+        } else {
+            dot.style.background = '#ef4444'; // Κόκκινο
+            statusText.innerText = 'Είσαι Offline';
+        }
+    }
+
+    // Ακούμε για αλλαγές στη σύνδεση του browser
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+
+    // Αρχικός έλεγχος
+    updateStatus();
+</script>
 
 <main>
     <div class="chat-container">
