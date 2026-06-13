@@ -267,8 +267,7 @@
         // Ρύθμιση Username
         let myName = localStorage.getItem('chat_username');
         if (!myName) {
-            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
-            localStorage.setItem('chat_username', myName);
+            myName = "Anonymous";
         }
 
         // --- TAB SWITCHER LOGIC ---
