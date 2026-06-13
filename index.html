@@ -3,35 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Η Ιστοσελίδα μου</title>
+    <title>Minimal Space</title>
     <style>
+        /* Minimal Reset & CSS Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0a0a0a;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #ff3366; /* Ένα minimal neon κόκκινο/ροζ για έμφαση */
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
         }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        /* Main Container */
+        main {
             text-align: center;
+            max-width: 600px;
+            animation: fadeIn 1.2s ease-out;
         }
+
+        /* Typography */
         h1 {
-            color: #333;
-            font-size: 23px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Minimal Navigation / Links */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent);
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* Subtle Background Element */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 51, 102, 0.05) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        /* CSS Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Settings */
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            p { font-size: 0.9rem; }
+            nav { flex-direction: column; gap: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>ΜΟΣΧΟΛΙΟΣ-ΜΑΡΙΝΟΣ ΜΟΥΝΑΡΟΙ</h1>
-    </div>
+    <div class="glow"></div>
+
+    <main>
+        <h1>ΜΟΣΧΟΛΙΟΣ-ΜΑΡΙΝΟΣ <span>ΜΟΥΝΑΡΟΙ</span></h1>
+        <p>Λιγότερη φασαρία, περισσότερη ουσία. Αυτό είναι ένα minimal single-page site φτιαγμένο για να τρέχει σφαίρα στο GitHub Pages.</p>
+        
+        <nav>
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <a href="#" onclick="alert('Less is more.'); return false;">Σχετικά</a>
+            <a href="mailto:test@example.com">Επικοινωνία</a>
+        </nav>
+    </main>
 
 </body>
 </html>
