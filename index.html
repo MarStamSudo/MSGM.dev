@@ -3,148 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Space</title>
+    <title>Our Dev Workspace</title>
     <style>
-        /* Minimal Reset & CSS Variables */
+        :root {
+            --bg-dark: #121214;
+            --sidebar-bg: #1a1a1e;
+            --card-bg: #222227;
+            --accent-color: #6366f1; /* Ίντιγκο/Μπλε του developer */
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #2e2e35;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        :root {
-            --bg-color: #0a0a0a;
-            --text-main: #ffffff;
-            --text-muted: #888888;
-            --accent: #ff3366; /* Ένα minimal neon κόκκινο/ροζ για έμφαση */
-            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: var(--font);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            height: 100vh;
             overflow: hidden;
         }
 
-        /* Main Container */
-        main {
-            text-align: center;
-            max-width: 600px;
-            animation: fadeIn 1.2s ease-out;
+        /* SIDEBAR */
+        aside {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
         }
 
-        /* Typography */
-        h1 {
-            font-size: 2.5rem;
+        .workspace-title {
+            font-size: 1.2rem;
             font-weight: 700;
-            letter-spacing: -1px;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
             margin-bottom: 10px;
         }
 
-        h1 span {
-            color: var(--accent);
-        }
-
-        p {
-            font-size: 1rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-
-        /* Minimal Navigation / Links */
-        nav {
+        .menu-links {
+            list-style: none;
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        nav a {
+        .menu-links a {
             color: var(--text-main);
             text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
+            display: block;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+
+        .menu-links a:hover, .menu-links a.active {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        /* MAIN CONTENT AREA */
+        main {
+            flex-1: 1;
+            width: calc(100% - 260px);
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Chat αριστερά, Projects δεξιά */
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
+
+        /* CHAT SECTION */
+        .chat-container {
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.incoming {
+            background-color: var(--card-bg);
+            align-self: flex-start;
+        }
+
+        .message.outgoing {
+            background-color: var(--accent-color);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message .meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .message.outgoing .meta {
+            color: #e0e7ff;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex-grow: 1;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            opacity: 0.9;
+        }
+
+        /* PROJECTS / TODO SECTION */
+        .projects-container {
+            background-color: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .task-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-item {
+            background-color: var(--card-bg);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
             font-size: 0.9rem;
-            font-weight: 500;
-            letter-spacing: 1px;
+        }
+
+        .task-status {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            transition: color 0.3s ease, transform 0.2s ease;
-            position: relative;
+            font-weight: 700;
+            margin-top: 5px;
+            display: inline-block;
         }
+        
+        .status-todo { color: #f59e0b; }
+        .status-done { color: #10b981; }
 
-        nav a::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            transform: scaleX(0);
-            height: 1px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--accent);
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
-        }
-
-        nav a:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-
-        nav a:hover {
-            color: var(--accent);
-        }
-
-        /* Subtle Background Element */
-        .glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255, 51, 102, 0.05) 0%, rgba(0,0,0,0) 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-        }
-
-        /* CSS Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive Settings */
-        @media (max-width: 480px) {
-            h1 { font-size: 2rem; }
-            p { font-size: 0.9rem; }
-            nav { flex-direction: column; gap: 15px; }
+        /* Responsive */
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+            .projects-container { display: none; } /* Κρύβεται στα κινητά για οικονομία χώρου */
         }
     </style>
 </head>
 <body>
 
-    <div class="glow"></div>
-
-    <main>
-        <h1>ΜΟΣΧΟΛΙΟΣ-ΜΑΡΙΝΟΣ <span>ΜΟΥΝΑΡΟΙ</span></h1>
-        <p>Λιγότερη φασαρία, περισσότερη ουσία. Αυτό είναι ένα minimal single-page site φτιαγμένο για να τρέχει σφαίρα στο GitHub Pages.</p>
+    <!-- SIDEBAR NAVIGATION -->
+    <aside>
+        <div class="workspace-title">
+            💻 DevRoom_
+        </div>
         
-        <nav>
-            <a href="https://github.com" target="_blank">GitHub</a>
-            <a href="#" onclick="alert('Less is more.'); return false;">Σχετικά</a>
-            <a href="mailto:test@example.com">Επικοινωνία</a>
-        </nav>
+        <p class="menu-label">Διαχείριση</p>
+        <ul class="menu-links">
+            <li><a href="#" class="active">💬 Συζήτηση</a></li>
+            <li><a href="#">📁 Projects</a></li>
+            <li><a href="#">📝 Σημειώσεις</a></li>
+            <li><a href="#">⚙️ Ρυθμίσεις</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN WORKSPACE -->
+    <main>
+        <!-- ΑΡΙΣΤΕΡΑ: CHAT -->
+        <div class="chat-container">
+            <div class="section-header"># general-chat</div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message incoming">
+                    <span class="meta">Φίλος • Τώρα</span>
+                    Έστησα το repository στο GitHub. Τι project λέτε να ξεκινήσουμε πρώτο;
+                </div>
+                <div class="message outgoing">
+                    <span class="meta">Εσύ • Τώρα</span>
+                    Ωραίος! Λέω να φτιάξουμε αυτό το workspace UI για αρχή και μετά βλέπουμε.
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα...">
+                <button onclick="sendMessage()">Αποστολή</button>
+            </div>
+        </div>
+
+        <!-- ΔΕΞΙΑ: PROJECTS / TASKS -->
+        <div class="projects-container">
+            <div class="section-header" style="padding:0 0 10px 0; border-bottom:1px solid var(--border-color)">📌 Active Projects</div>
+            
+            <ul class="task-list">
+                <li class="task-item">
+                    <strong>Σχεδιασμός UI Workspace</strong>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:3px;">Να φτιαχτεί η βασική HTML/CSS δομή.</p>
+                    <span class="task-status status-done">✔ Ολοκληρώθηκε</span>
+                </li>
+                <li class="task-item">
+                    <strong>Σύνδεση με Βάση Δεδομένων</strong>
+                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:3px;">Για να αποθηκεύονται τα μηνύματα του chat live.</p>
+                    <span class="task-status status-todo">⏳ Σε εκκρεμότητα</span>
+                </li>
+            </ul>
+        </div>
     </main>
 
+    <!-- Απλό JavaScript για να λειτουργεί η αποστολή μηνύματος στην οθόνη (τοπικά) -->
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messageText = input.value.trim();
+            
+            if (messageText !== '') {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Δημιουργία νέου μηνύματος
+                const newMessage = document.createElement('div');
+                newMessage.className = 'message outgoing';
+                newMessage.innerHTML = `<span class="meta">Εσύ • Τώρα</span>${messageText}`;
+                
+                chatMessages.appendChild(newMessage);
+                input.value = ''; // Καθαρισμός input
+                
+                // Αυτόματο scroll προς τα κάτω
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Αποστολή και με το πάτημα του Enter
+        document.getElementById('messageInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>
