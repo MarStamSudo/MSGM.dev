@@ -24,10 +24,10 @@
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
             
-            if ((u === 'marinos' && p === 'marinos') || (u === 'giorgos' && p === 'giorgos')) {
-                alert("Καλώς ήρθες!");
-            } else {
-                alert("Λάθος στοιχεία!");
+        if ((u === 'marinos' && p === 'marinos') || (u === 'giorgos' && p === 'giorgos')) {
+            window.location.href = 'workspace.html'; 
+        } else {
+            alert("Λάθος στοιχεία!");
             }
         });
     </script>
