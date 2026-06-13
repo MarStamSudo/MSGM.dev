@@ -214,20 +214,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ⚠️ ΑΝΤΙΚΑΤΑΣΤΗΣΕ ΤΑ ΠΑΡΑΚΑΤΩ ΜΕ ΤΑ ΔΙΚΑ ΣΟΥ ΣΤΟΙΧΕΙΑ ΑΠΟ ΤΟ SUPABASE SETTINGS -> API
+        // ⚠️ Στοιχεία Supabase API
         const SUPABASE_URL = "https://gwqcqfiqgkpobvfbtvzf.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
 
-        const supabase = supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+        // Διόρθωση αρχικοποίησης (χρήση του window.supabase)
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Ρύθμιση Username (Ζητάει όνομα την πρώτη φορά)
+        // Ρύθμιση Username
         let myName = localStorage.getItem('chat_username');
         if (!myName) {
             myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
             localStorage.setItem('chat_username', myName);
         }
 
-        // Συνάρτηση για να εμφανίζεται ένα μήνυμα στο UI
+        // Συνάρτηση για εμφάνιση μηνύματος στο UI
         function appendMessage(sender, text) {
             const chatMessages = document.getElementById('chatMessages');
             const isMine = sender === myName;
@@ -238,17 +239,19 @@
             newMessage.innerHTML = `<span class="meta">${sender}</span>${text}`;
             
             chatMessages.appendChild(newMessage);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto scroll down
+            chatMessages.scrollTop = chatMessages.scrollHeight; 
         }
 
-        // 1. Φόρτωση παλιών μηνυμάτων κατά το άνοιγμα της σελίδας
+        // 1. Φόρτωση παλιών μηνυμάτων (Προσοχή στο όνομα του πίνακα 'messages')
         async function loadMessages() {
-            const { data, error } = await supabase
-                .from('messages')
+            const { data, error } = await supabaseClient
+                .from('messages') 
                 .select('*')
                 .order('created_at', { ascending: true });
 
-            if (!error && data) {
+            if (error) {
+                console.error("Error loading messages:", error);
+            } else if (data) {
                 data.forEach(msg => {
                     appendMessage(msg.sender, msg.text);
                 });
@@ -256,29 +259,33 @@
         }
         loadMessages();
 
-        // 2. Λειτουργία Αποστολής Μηνύματος (Insert στη PostgreSQL)
+        // 2. Λειτουργία Αποστολής Μηνύματος
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const messageText = input.value.trim();
             
             if (messageText !== '') {
-                const { error } = await supabase
-                    .from('messages')
+                const { error } = await supabaseClient
+                    .from('messages') 
                     .insert([{ sender: myName, text: messageText }]);
                 
-                if (error) console.error("Error sending message:", error);
+                if (error) {
+                    console.error("Error sending message:", error);
+                }
                 input.value = '';
             }
         }
 
-        // 3. REAL-TIME ΑΚΡΟΑΣΗ (Ακούει για νέα inserts στον πίνακα messages)
-        supabase
+        // 3. REAL-TIME ΑΚΡΟΑΣΗ
+        supabaseClient
             .channel('public:messages')
-            .on('postgres_changes', { event: 'INSERT', scheme: 'public', table: 'messages' }, payload => {
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                 const newMsg = payload.new;
                 appendMessage(newMsg.sender, newMsg.text);
             })
-            .subscribe();
+            .subscribe((status) => {
+                console.log("Realtime status:", status);
+            });
 
         // Αποστολή με το Enter
         document.getElementById('messageInput').addEventListener('keypress', function (e) {
@@ -286,6 +293,12 @@
                 sendMessage();
             }
         });
+
+        // Λειτουργία Αποσύνδεσης
+        function logout() {
+            localStorage.removeItem('chat_username');
+            location.reload();
+        }
     </script>
 </body>
 </html>
