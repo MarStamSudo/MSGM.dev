@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SupaRoom_ — Dev Workspace</title>
+    <title>MSGM BASE</title>
+    <div id="statusIndicator" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.8rem;">
+    <div id="dot" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+    <span id="statusText">Είσαι Online</span>
+</div>
     <style>
         :root {
             --bg-dark: #121214;
@@ -219,12 +223,6 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
     const supabaseClient   = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ── Username ─────────────────────────────────────
-    let myName = localStorage.getItem('chat_username');
-    if (!myName) {
-        myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
-        localStorage.setItem('chat_username', myName);
-    }
 
     // Sidebar avatar & name
     document.getElementById('sidebarName').textContent = myName;
