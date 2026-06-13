@@ -363,7 +363,11 @@
         document.getElementById('projectInput').addEventListener('keypress', e => { if (e.key === 'Enter') createNewProject(); });
 
         // Αποσύνδεση
-        function logout() { localStorage.removeItem('chat_username'); location.reload(); }
-    </script>
+    function logout() {
+        console.log("Logout clicked!"); // Πρόσθεσε αυτό το log για να δεις αν πατιέται
+        localStorage.removeItem('isLoggedIn');
+        window.location.href = 'index.html';
+    }
+</script>
 </body>
 </html>
