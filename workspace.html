@@ -267,7 +267,8 @@
         // Ρύθμιση Username
         let myName = localStorage.getItem('chat_username');
         if (!myName) {
-            myName = "Anonymous";
+            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
+            localStorage.setItem('chat_username', myName);
         }
 
         // --- TAB SWITCHER LOGIC ---
@@ -363,11 +364,7 @@
         document.getElementById('projectInput').addEventListener('keypress', e => { if (e.key === 'Enter') createNewProject(); });
 
         // Αποσύνδεση
-    function logout() {
-        console.log("Logout clicked!"); // Πρόσθεσε αυτό το log για να δεις αν πατιέται
-        localStorage.removeItem('isLoggedIn');
-        window.location.href = 'index.html';
-    }
-</script>
+        function logout() { localStorage.removeItem('chat_username'); location.reload(); }
+    </script>
 </body>
 </html>
