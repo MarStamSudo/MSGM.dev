@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSGM</title>
+    <title>Our Dev Workspace (Supabase)</title>
     <style>
         :root {
             --bg-dark: #121214;
             --sidebar-bg: #1a1a1e;
             --card-bg: #222227;
-            --accent-color: #3ecf8e; /* Το χαρακτηριστικό πράσινο του Supabase */
+            --accent-color: #3ecf8e; 
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: #2e2e35;
@@ -69,6 +69,7 @@
             display: block;
             font-size: 0.95rem;
             transition: background 0.2s;
+            cursor: pointer;
         }
 
         .menu-links a:hover, .menu-links a.active {
@@ -85,7 +86,17 @@
             height: 100%;
         }
 
-        .chat-container {
+        /* Tabs Logic */
+        .tab-content {
+            display: none;
+            height: 100%;
+        }
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-panel {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -118,37 +129,19 @@
             line-height: 1.4;
         }
 
-        .message.other {
-            background-color: var(--card-bg);
-            align-self: flex-start;
-        }
+        .message.other { background-color: var(--card-bg); align-self: flex-start; }
+        .message.mine { background-color: var(--accent-color); color: #121214; font-weight: 500; align-self: flex-end; }
+        .message .meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .message.mine .meta { color: #1e5239; }
 
-        .message.mine {
-            background-color: var(--accent-color);
-            color: #121214; /* Σκούρο κείμενο για να κάνει αντίθεση με το πράσινο */
-            font-weight: 500;
-            align-self: flex-end;
-        }
-
-        .message .meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-            display: block;
-        }
-        
-        .message.mine .meta {
-            color: #1e5239;
-        }
-
-        .chat-input-area {
+        .input-area {
             padding: 15px;
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
         }
 
-        .chat-input-area input {
+        .input-area input {
             flex-grow: 1;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -158,7 +151,7 @@
             outline: none;
         }
 
-        .chat-input-area button {
+        .input-area button {
             background-color: var(--accent-color);
             color: #121214;
             border: none;
@@ -168,136 +161,64 @@
             font-weight: 600;
         }
 
-        .projects-container {
+        /* Projects List Styling */
+        .projects-list-page {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-badge {
+            background-color: rgba(62, 207, 142, 0.2);
+            color: var(--accent-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .sidebar-projects {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
             height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 10px;
+            background: var(--card-bg);
+            margin-top: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent-color);
         }
 
         @media (max-width: 900px) {
             main { grid-template-columns: 1fr; }
-            .projects-container { display: none; }
+            .sidebar-projects { display: none; }
         }
     </style>
 </head>
 <body>
 
     <aside>
-        <div class="workspace-title">⚡ MSGM</div>
+        <div class="workspace-title">⚡ SupaRoom_</div>
         <p class="menu-label">Διαχείριση</p>
         <ul class="menu-links">
-            <li><a href="#" class="active">💬 Συζήτηση</a></li>
-            <li><a href="#">📁 Projects</a></li>
-            <li><a href="#" onclick="logout()" style="color: #ef4444; margin-top: 20px;">🚪 Αποσύνδεση</a></li>
-        </ul>
-    </aside>
-
-    <main>
-        <div class="chat-container">
-            <div class="section-header"># general-chat</div>
-            <div class="chat-messages" id="chatMessages"></div>
-
-            <div class="chat-input-area">
-                <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα...">
-                <button onclick="sendMessage()">Αποστολή</button>
-            </div>
-        </div>
-
-        <div class="projects-container">
-            <div class="section-header" style="padding:0 0 10px 0; border-bottom:1px solid var(--border-color)">📌 Active Projects</div>
-            <p style="margin-top: 15px; color: var(--text-muted); font-size: 0.9rem;">Βάση Δεδομένων: Supabase PostgreSQL ⚡</p>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // ⚠️ Στοιχεία Supabase API
-        const SUPABASE_URL = "https://gwqcqfiqgkpobvfbtvzf.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
-
-        // Διόρθωση αρχικοποίησης (χρήση του window.supabase)
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Ρύθμιση Username
-        let myName = localStorage.getItem('chat_username');
-        if (!myName) {
-            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
-            localStorage.setItem('chat_username', myName);
-        }
-
-        // Συνάρτηση για εμφάνιση μηνύματος στο UI
-        function appendMessage(sender, text) {
-            const chatMessages = document.getElementById('chatMessages');
-            const isMine = sender === myName;
-            const messageClass = isMine ? 'message mine' : 'message other';
-            
-            const newMessage = document.createElement('div');
-            newMessage.className = messageClass;
-            newMessage.innerHTML = `<span class="meta">${sender}</span>${text}`;
-            
-            chatMessages.appendChild(newMessage);
-            chatMessages.scrollTop = chatMessages.scrollHeight; 
-        }
-
-        // 1. Φόρτωση παλιών μηνυμάτων (Προσοχή στο όνομα του πίνακα 'messages')
-        async function loadMessages() {
-            const { data, error } = await supabaseClient
-                .from('messages') 
-                .select('*')
-                .order('created_at', { ascending: true });
-
-            if (error) {
-                console.error("Error loading messages:", error);
-            } else if (data) {
-                data.forEach(msg => {
-                    appendMessage(msg.sender, msg.text);
-                });
-            }
-        }
-        loadMessages();
-
-        // 2. Λειτουργία Αποστολής Μηνύματος
-        async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const messageText = input.value.trim();
-            
-            if (messageText !== '') {
-                const { error } = await supabaseClient
-                    .from('messages') 
-                    .insert([{ sender: myName, text: messageText }]);
-                
-                if (error) {
-                    console.error("Error sending message:", error);
-                }
-                input.value = '';
-            }
-        }
-
-        // 3. REAL-TIME ΑΚΡΟΑΣΗ
-        supabaseClient
-            .channel('public:messages')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-                const newMsg = payload.new;
-                appendMessage(newMsg.sender, newMsg.text);
-            })
-            .subscribe((status) => {
-                console.log("Realtime status:", status);
-            });
-
-        // Αποστολή με το Enter
-        document.getElementById('messageInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        // Λειτουργία Αποσύνδεσης
-        function logout() {
-            localStorage.removeItem('chat_username');
-            location.reload();
-        }
-    </script>
-</body>
-</html>
+            <li><a onclick="switchTab('chat')" id="tab-link-chat" class="active">💬 Συζήτηση</a></li>
+            <li><a onclick="switchTab('projects')" id="tab-link-projects">📁 Projects</a></li>
+            <li><a onclick="logout()" style="color: #ef4444; margin-top: 20px;">🚪 Αποσύνδεση</a></li>
