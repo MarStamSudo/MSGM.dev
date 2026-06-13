@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSGM BASE</title>
-    <div id="statusIndicator" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.8rem;">
-    <div id="dot" style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
-    <span id="statusText">Είσαι Online</span>
-</div>
+    <title>Our Dev Workspace (Supabase)</title>
     <style>
         :root {
             --bg-dark: #121214;
             --sidebar-bg: #1a1a1e;
             --card-bg: #222227;
-            --accent-color: #3ecf8e;
+            --accent-color: #3ecf8e; /* Το χαρακτηριστικό πράσινο του Supabase */
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: #2e2e35;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-        /* ── Sidebar ── */
         aside {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -33,133 +39,142 @@
             padding: 20px;
         }
 
-        .workspace-title { font-size: 1.2rem; font-weight: 700; color: var(--accent-color); margin-bottom: 14px; }
+        .workspace-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
 
-        /* User badge */
-        .user-badge {
+        .menu-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .menu-links {
+            list-style: none;
             display: flex;
-            align-items: center;
-            gap: 10px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 12px;
-            margin-bottom: 24px;
+            flex-direction: column;
+            gap: 8px;
         }
-        .avatar-sm {
-            width: 32px; height: 32px; border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; color: #121214; flex-shrink: 0;
-        }
-        .user-details { display: flex; flex-direction: column; }
-        .user-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
-        .online-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--accent-color); }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-color); }
 
-        .menu-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 10px; }
-        .menu-links { list-style: none; display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .menu-links a {
-            color: var(--text-main); text-decoration: none;
-            padding: 9px 10px; border-radius: 6px; display: flex; align-items: center; gap: 9px;
-            font-size: 0.9rem; transition: background 0.15s; cursor: pointer;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
+            display: block;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
-        .menu-links a:hover, .menu-links a.active { background-color: var(--card-bg); color: var(--accent-color); }
-        .menu-links a.logout { color: #ef4444; margin-top: auto; }
 
-        /* ── Main ── */
-        main { flex: 1; display: grid; grid-template-columns: 2fr 1fr; gap: 16px; padding: 16px; height: 100%; overflow: hidden; }
+        .menu-links a:hover, .menu-links a.active {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
 
         .chat-container {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            display: flex; flex-direction: column; height: 100%; overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
         }
 
-        .chat-header {
-            padding: 14px 18px;
+        .section-header {
+            padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .channel-name { font-weight: 600; font-size: 0.95rem; }
-        .realtime-pill {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 11px; color: var(--accent-color);
-            background: rgba(62,207,142,0.1);
-            padding: 4px 10px; border-radius: 99px;
+            font-weight: 600;
         }
 
-        /* Messages */
-        .chat-messages { flex-grow: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-
-        .msg-row { display: flex; gap: 10px; align-items: flex-start; }
-        .msg-row.mine { flex-direction: row-reverse; }
-
-        .avatar {
-            width: 34px; height: 34px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; flex-shrink: 0;
-        }
-        .avatar.other { background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); }
-        .avatar.me { background-color: var(--accent-color); color: #121214; }
-
-        .bubble-wrap { display: flex; flex-direction: column; gap: 3px; max-width: 75%; }
-        .msg-row.mine .bubble-wrap { align-items: flex-end; }
-
-        .msg-meta { font-size: 11px; color: var(--text-muted); }
-
-        .bubble { padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; word-break: break-word; }
-        .bubble.other { background-color: var(--card-bg); border-radius: 4px 10px 10px 10px; }
-        .bubble.mine { background-color: var(--accent-color); color: #121214; font-weight: 500; border-radius: 10px 4px 10px 10px; }
-
-        /* Date divider */
-        .date-divider {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 11px; color: var(--text-muted); margin: 4px 0;
-        }
-        .date-divider::before, .date-divider::after {
-            content: ''; flex: 1; border-top: 1px solid var(--border-color);
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        /* Input */
-        .chat-input-area { padding: 14px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; }
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.other {
+            background-color: var(--card-bg);
+            align-self: flex-start;
+        }
+
+        .message.mine {
+            background-color: var(--accent-color);
+            color: #121214; /* Σκούρο κείμενο για να κάνει αντίθεση με το πράσινο */
+            font-weight: 500;
+            align-self: flex-end;
+        }
+
+        .message .meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        .message.mine .meta {
+            color: #1e5239;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
         .chat-input-area input {
-            flex-grow: 1; background-color: var(--card-bg);
-            border: 1px solid var(--border-color); border-radius: 8px;
-            padding: 11px 14px; color: var(--text-main); font-size: 0.9rem; outline: none;
-            transition: border-color 0.15s;
+            flex-grow: 1;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-main);
+            outline: none;
         }
-        .chat-input-area input:focus { border-color: var(--accent-color); }
-        .chat-input-area button {
-            background-color: var(--accent-color); color: #121214;
-            border: none; padding: 0 18px; height: 42px; border-radius: 8px;
-            cursor: pointer; font-weight: 600; font-size: 0.9rem;
-            transition: opacity 0.15s;
-        }
-        .chat-input-area button:hover { opacity: 0.85; }
 
-        /* Projects panel */
+        .chat-input-area button {
+            background-color: var(--accent-color);
+            color: #121214;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         .projects-container {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 18px;
+            padding: 20px;
             height: 100%;
-            overflow-y: auto;
         }
-        .section-header { font-weight: 600; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); margin-bottom: 14px; }
-        .db-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 12px; color: var(--accent-color);
-            background: rgba(62,207,142,0.1);
-            padding: 5px 10px; border-radius: 6px; margin-bottom: 16px;
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 99px; }
 
         @media (max-width: 900px) {
             main { grid-template-columns: 1fr; }
@@ -169,187 +184,121 @@
 </head>
 <body>
 
-<aside>
-    <div class="workspace-title">⚡ SupaRoom_</div>
+    <aside>
+        <div class="workspace-title">⚡ SupaRoom_</div>
+        <p class="menu-label">Διαχείριση</p>
+        <ul class="menu-links">
+            <li><a href="#" class="active">💬 Συζήτηση</a></li>
+            <li><a href="#">📁 Projects</a></li>
+            <li><a href="#">⚙️ Ρυθμίσεις</a></li>
+            <li><a href="#" onclick="logout()" style="color: #ef4444; margin-top: 20px;">🚪 Αποσύνδεση</a></li>
+        </ul>
+    </aside>
 
-    <div class="user-badge">
-        <div class="avatar-sm" id="sidebarAvatar"></div>
-        <div class="user-details">
-            <span class="user-name" id="sidebarName"></span>
-            <span class="online-status"><span class="dot"></span>online</span>
+    <main>
+        <div class="chat-container">
+            <div class="section-header"># general-chat</div>
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα...">
+                <button onclick="sendMessage()">Αποστολή</button>
+            </div>
         </div>
-    </div>
 
-    <p class="menu-label">Διαχείριση</p>
-    <ul class="menu-links">
-        <li><a href="#" class="active">💬 Συζήτηση</a></li>
-        <li><a href="#">📁 Projects</a></li>
-        <li><a href="#">⚙️ Ρυθμίσεις</a></li>
-        <li><a href="#" onclick="logout()" class="logout">🚪 Αποσύνδεση</a></li>
-    </ul>
-</aside>
+        <div class="projects-container">
+            <div class="section-header" style="padding:0 0 10px 0; border-bottom:1px solid var(--border-color)">📌 Active Projects</div>
+            <p style="margin-top: 15px; color: var(--text-muted); font-size: 0.9rem;">Βάση Δεδομένων: Supabase PostgreSQL ⚡</p>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-    const dot = document.getElementById('dot');
-    const statusText = document.getElementById('statusText');
+        // ⚠️ Στοιχεία Supabase API
+        const SUPABASE_URL = "https://gwqcqfiqgkpobvfbtvzf.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
 
-    function updateStatus() {
-        if (navigator.onLine) {
-            dot.style.background = '#10b981'; // Πράσινο
-            statusText.innerText = 'Είσαι Online';
-        } else {
-            dot.style.background = '#ef4444'; // Κόκκινο
-            statusText.innerText = 'Είσαι Offline';
+        // Διόρθωση αρχικοποίησης (χρήση του window.supabase)
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Ρύθμιση Username
+        let myName = localStorage.getItem('chat_username');
+        if (!myName) {
+            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
+            localStorage.setItem('chat_username', myName);
         }
-    }
 
-    // Ακούμε για αλλαγές στη σύνδεση του browser
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
+        // Συνάρτηση για εμφάνιση μηνύματος στο UI
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const isMine = sender === myName;
+            const messageClass = isMine ? 'message mine' : 'message other';
+            
+            const newMessage = document.createElement('div');
+            newMessage.className = messageClass;
+            newMessage.innerHTML = `<span class="meta">${sender}</span>${text}`;
+            
+            chatMessages.appendChild(newMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight; 
+        }
 
-    // Αρχικός έλεγχος
-    updateStatus();
-</script>
+        // 1. Φόρτωση παλιών μηνυμάτων (Προσοχή στο όνομα του πίνακα 'messages')
+        async function loadMessages() {
+            const { data, error } = await supabaseClient
+                .from('messages') 
+                .select('*')
+                .order('created_at', { ascending: true });
 
-<main>
-    <div class="chat-container">
-        <div class="chat-header">
-            <span class="channel-name"># general-chat</span>
-            <span class="realtime-pill" id="realtimePill">
-                <span class="dot"></span> Realtime
-            </span>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="date-divider">Σήμερα</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα... (Enter για αποστολή)" autocomplete="off">
-            <button onclick="sendMessage()">Αποστολή</button>
-        </div>
-    </div>
-
-    <div class="projects-container">
-        <div class="section-header">📌 Active Projects</div>
-        <div class="db-badge">⚡ Supabase PostgreSQL</div>
-        <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">
-            Realtime subscriptions ενεργά.<br>
-            Όλα τα μηνύματα αποθηκεύονται αυτόματα.
-        </p>
-    </div>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // ── Supabase config ──────────────────────────────
-    const SUPABASE_URL     = "https://gwqcqfiqgkpobvfbtvzf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
-    const supabaseClient   = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-
-    // Sidebar avatar & name
-    document.getElementById('sidebarName').textContent = myName;
-    document.getElementById('sidebarAvatar').textContent = initials(myName);
-
-    // ── Helpers ──────────────────────────────────────
-    function initials(name) {
-        return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    }
-
-    function formatTime(isoString) {
-        const d = isoString ? new Date(isoString) : new Date();
-        return d.toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' });
-    }
-
-    // Track IDs of already-rendered messages to avoid duplicates from realtime
-    const renderedIds = new Set();
-
-    // ── Render a message ─────────────────────────────
-    function appendMessage(sender, text, timestamp, id) {
-        if (id && renderedIds.has(id)) return;
-        if (id) renderedIds.add(id);
-
-        const chatMessages = document.getElementById('chatMessages');
-        const isMine = sender === myName;
-        const av = initials(sender);
-        const time = formatTime(timestamp);
-
-        const row = document.createElement('div');
-        row.className = 'msg-row' + (isMine ? ' mine' : '');
-        row.innerHTML = `
-            <div class="avatar ${isMine ? 'me' : 'other'}">${av}</div>
-            <div class="bubble-wrap">
-                <span class="msg-meta">${isMine ? '' : sender + ' · '}${time}</span>
-                <div class="bubble ${isMine ? 'mine' : 'other'}">${escapeHtml(text)}</div>
-            </div>`;
-
-        chatMessages.appendChild(row);
-        row.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    // ── Load history ─────────────────────────────────
-    async function loadMessages() {
-        const { data, error } = await supabaseClient
-            .from('messages')
-            .select('*')
-            .order('created_at', { ascending: true });
-
-        if (error) { console.error('Load error:', error); return; }
-        data?.forEach(msg => appendMessage(msg.sender, msg.text, msg.created_at, msg.id));
-    }
-    loadMessages();
-
-    // ── Send ─────────────────────────────────────────
-    async function sendMessage() {
-        const input = document.getElementById('messageInput');
-        const text  = input.value.trim();
-        if (!text) return;
-
-        input.value = '';
-        // Optimistic render (no id yet — realtime will bring the real one)
-        appendMessage(myName, text, null, null);
-
-        const { error } = await supabaseClient
-            .from('messages')
-            .insert([{ sender: myName, text }]);
-
-        if (error) console.error('Send error:', error);
-    }
-
-    // ── Realtime ─────────────────────────────────────
-    supabaseClient
-        .channel('public:messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-            const msg = payload.new;
-            // Only render incoming messages from OTHER users (own are already rendered optimistically)
-            if (msg.sender !== myName) {
-                appendMessage(msg.sender, msg.text, msg.created_at, msg.id);
+            if (error) {
+                console.error("Error loading messages:", error);
+            } else if (data) {
+                data.forEach(msg => {
+                    appendMessage(msg.sender, msg.text);
+                });
             }
-        })
-        .subscribe(status => {
-            const pill = document.getElementById('realtimePill');
-            if (status === 'SUBSCRIBED') {
-                pill.style.color = '#3ecf8e';
-            } else {
-                pill.style.color = '#9ca3af';
+        }
+        loadMessages();
+
+        // 2. Λειτουργία Αποστολής Μηνύματος
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messageText = input.value.trim();
+            
+            if (messageText !== '') {
+                const { error } = await supabaseClient
+                    .from('messages') 
+                    .insert([{ sender: myName, text: messageText }]);
+                
+                if (error) {
+                    console.error("Error sending message:", error);
+                }
+                input.value = '';
             }
-            console.log('Realtime:', status);
+        }
+
+        // 3. REAL-TIME ΑΚΡΟΑΣΗ
+        supabaseClient
+            .channel('public:messages')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                const newMsg = payload.new;
+                appendMessage(newMsg.sender, newMsg.text);
+            })
+            .subscribe((status) => {
+                console.log("Realtime status:", status);
+            });
+
+        // Αποστολή με το Enter
+        document.getElementById('messageInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
 
-    // ── Keyboard ─────────────────────────────────────
-    document.getElementById('messageInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-    });
-
-    // ── Logout ───────────────────────────────────────
-    function logout() {
-        if (confirm('Θέλεις σίγουρα να αποσυνδεθείς;')) {
+        // Λειτουργία Αποσύνδεσης
+        function logout() {
             localStorage.removeItem('chat_username');
             location.reload();
         }
-    }
-</script>
+    </script>
 </body>
 </html>
