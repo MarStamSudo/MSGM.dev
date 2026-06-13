@@ -222,3 +222,149 @@
             <li><a onclick="switchTab('chat')" id="tab-link-chat" class="active">💬 Συζήτηση</a></li>
             <li><a onclick="switchTab('projects')" id="tab-link-projects">📁 Projects</a></li>
             <li><a onclick="logout()" style="color: #ef4444; margin-top: 20px;">🚪 Αποσύνδεση</a></li>
+        </ul>
+    </aside>
+
+    <main>
+        <div id="tab-chat" class="tab-content active">
+            <div class="main-panel">
+                <div class="section-header"># general-chat</div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="input-area">
+                    <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα...">
+                    <button onclick="sendMessage()">Αποστολή</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-projects" class="tab-content">
+            <div class="main-panel">
+                <div class="section-header">📁 Διαχείριση Projects</div>
+                <div class="projects-list-page" id="mainProjectsList"></div>
+                <div class="input-area">
+                    <input type="text" id="projectInput" placeholder="Όνομα νέου Project...">
+                    <button onclick="createNewProject()">Προσθήκη</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-projects">
+            <div class="section-header" style="padding:0 0 10px 0; border-bottom:1px solid var(--border-color)">📌 Active Projects</div>
+            <div id="sidebarProjectsList">
+                </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Στοιχεία Supabase API (Έτοιμα και ρυθμισμένα σωστά)
+        const SUPABASE_URL = "https://gwqcqfiqgkpobvfbtvzf.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cWNxZmlxZ2twb2J2ZmJ0dnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTc5NjEsImV4cCI6MjA5NjkzMzk2MX0.U_ZmkI5l0y-48FLE08lLPmvpKIuqKr5b7_ZLIdSMPJk";
+
+        // Αρχικοποίηση client
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Ρύθμιση Username
+        let myName = localStorage.getItem('chat_username');
+        if (!myName) {
+            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
+            localStorage.setItem('chat_username', myName);
+        }
+
+        // --- TAB SWITCHER LOGIC ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-links a').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById(`tab-link-${tabName}`).classList.add('active');
+        }
+
+        // --- CHAT LOGIC ---
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const isMine = sender === myName;
+            const messageClass = isMine ? 'message mine' : 'message other';
+            const newMessage = document.createElement('div');
+            newMessage.className = messageClass;
+            newMessage.innerHTML = `<span class="meta">${sender}</span>${text}`;
+            chatMessages.appendChild(newMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight; 
+        }
+
+        async function loadMessages() {
+            const { data, error } = await supabaseClient.from('messages').select('*').order('created_at', { ascending: true });
+            if (data) data.forEach(msg => appendMessage(msg.sender, msg.text));
+        }
+        loadMessages();
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messageText = input.value.trim();
+            if (messageText !== '') {
+                await supabaseClient.from('messages').insert([{ sender: myName, text: messageText }]);
+                input.value = '';
+            }
+        }
+
+        // --- PROJECTS LOGIC ---
+        function updateProjectUI(title) {
+            // Προσθήκη στο δεξί panel (Sidebar)
+            const sidebarList = document.getElementById('sidebarProjectsList');
+            const sidebarItem = document.createElement('div');
+            sidebarItem.className = 'sidebar-item';
+            sidebarItem.innerText = title;
+            sidebarList.appendChild(sidebarItem);
+
+            // Προσθήκη στην κεντρική σελίδα διαχείρισης Projects
+            const mainList = document.getElementById('mainProjectsList');
+            const projectCard = document.createElement('div');
+            projectCard.className = 'project-card';
+            projectCard.innerHTML = `<span>📁 ${title}</span> <span class="project-badge">Active</span>`;
+            mainList.appendChild(projectCard);
+        }
+
+        async function loadProjects() {
+            const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: true });
+            if (data) {
+                document.getElementById('sidebarProjectsList').innerHTML = '';
+                document.getElementById('mainProjectsList').innerHTML = '';
+                data.forEach(proj => updateProjectUI(proj.title));
+            }
+        }
+        loadProjects();
+
+        async function createNewProject() {
+            const input = document.getElementById('projectInput');
+            const projectTitle = input.value.trim();
+            if (projectTitle !== '') {
+                const { error } = await supabaseClient.from('projects').insert([{ title: projectTitle, status: 'Active' }]);
+                if (error) console.error(error);
+                input.value = '';
+            }
+        }
+
+        // --- REAL-TIME ΣΥΝΔΕΣΕΙΣ (SUPABASE REALTIME) ---
+        // Realtime για Μηνύματα
+        supabaseClient
+            .channel('public:messages')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                appendMessage(payload.new.sender, payload.new.text);
+            }).subscribe();
+
+        // Realtime για Projects
+        supabaseClient
+            .channel('public:projects')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'projects' }, payload => {
+                updateProjectUI(payload.new.title);
+            }).subscribe();
+
+        // Listeners για το πάτημα του Enter στα inputs
+        document.getElementById('messageInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+        document.getElementById('projectInput').addEventListener('keypress', e => { if (e.key === 'Enter') createNewProject(); });
+
+        // Αποσύνδεση
+        function logout() { localStorage.removeItem('chat_username'); location.reload(); }
+    </script>
+</body>
+</html>
