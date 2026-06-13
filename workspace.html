@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Dev Workspace</title>
+    <title>Our Dev Workspace (Supabase)</title>
     <style>
         :root {
             --bg-dark: #121214;
             --sidebar-bg: #1a1a1e;
             --card-bg: #222227;
-            --accent-color: #6366f1; /* Ίντιγκο/Μπλε του developer */
+            --accent-color: #3ecf8e; /* Το χαρακτηριστικό πράσινο του Supabase */
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: #2e2e35;
@@ -30,7 +30,6 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR */
         aside {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -45,9 +44,6 @@
             font-weight: 700;
             margin-bottom: 30px;
             color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .menu-label {
@@ -80,18 +76,15 @@
             color: var(--accent-color);
         }
 
-        /* MAIN CONTENT AREA */
         main {
-            flex-1: 1;
-            width: calc(100% - 260px);
+            flex: 1;
             display: grid;
-            grid-template-columns: 2fr 1fr; /* Chat αριστερά, Projects δεξιά */
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
             padding: 20px;
             height: 100%;
         }
 
-        /* CHAT SECTION */
         .chat-container {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
@@ -125,14 +118,15 @@
             line-height: 1.4;
         }
 
-        .message.incoming {
+        .message.other {
             background-color: var(--card-bg);
             align-self: flex-start;
         }
 
-        .message.outgoing {
+        .message.mine {
             background-color: var(--accent-color);
-            color: white;
+            color: #121214; /* Σκούρο κείμενο για να κάνει αντίθεση με το πράσινο */
+            font-weight: 500;
             align-self: flex-end;
         }
 
@@ -143,8 +137,8 @@
             display: block;
         }
         
-        .message.outgoing .meta {
-            color: #e0e7ff;
+        .message.mine .meta {
+            color: #1e5239;
         }
 
         .chat-input-area {
@@ -166,98 +160,43 @@
 
         .chat-input-area button {
             background-color: var(--accent-color);
-            color: white;
+            color: #121214;
             border: none;
             padding: 0 20px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: opacity 0.2s;
         }
 
-        .chat-input-area button:hover {
-            opacity: 0.9;
-        }
-
-        /* PROJECTS / TODO SECTION */
         .projects-container {
             background-color: var(--sidebar-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
             height: 100%;
-            overflow-y: auto;
         }
 
-        .task-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .task-item {
-            background-color: var(--card-bg);
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent-color);
-            font-size: 0.9rem;
-        }
-
-        .task-status {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            margin-top: 5px;
-            display: inline-block;
-        }
-        
-        .status-todo { color: #f59e0b; }
-        .status-done { color: #10b981; }
-
-        /* Responsive */
         @media (max-width: 900px) {
             main { grid-template-columns: 1fr; }
-            .projects-container { display: none; } /* Κρύβεται στα κινητά για οικονομία χώρου */
+            .projects-container { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIDEBAR NAVIGATION -->
     <aside>
-        <div class="workspace-title">
-            💻 DevRoom_
-        </div>
-        
+        <div class="workspace-title">⚡ SupaRoom_</div>
         <p class="menu-label">Διαχείριση</p>
         <ul class="menu-links">
             <li><a href="#" class="active">💬 Συζήτηση</a></li>
             <li><a href="#">📁 Projects</a></li>
-            <li><a href="#">📝 Σημειώσεις</a></li>
-            <li><a href="#">⚙️ Ρυθμίσεις</a></li>
         </ul>
     </aside>
 
-    <!-- MAIN WORKSPACE -->
     <main>
-        <!-- ΑΡΙΣΤΕΡΑ: CHAT -->
         <div class="chat-container">
             <div class="section-header"># general-chat</div>
-            
-            <div class="chat-messages" id="chatMessages">
-                <div class="message incoming">
-                    <span class="meta">Φίλος • Τώρα</span>
-                    Έστησα το repository στο GitHub. Τι project λέτε να ξεκινήσουμε πρώτο;
-                </div>
-                <div class="message outgoing">
-                    <span class="meta">Εσύ • Τώρα</span>
-                    Ωραίος! Λέω να φτιάξουμε αυτό το workspace UI για αρχή και μετά βλέπουμε.
-                </div>
-            </div>
+            <div class="chat-messages" id="chatMessages"></div>
 
             <div class="chat-input-area">
                 <input type="text" id="messageInput" placeholder="Γράψε ένα μήνυμα...">
@@ -265,48 +204,81 @@
             </div>
         </div>
 
-        <!-- ΔΕΞΙΑ: PROJECTS / TASKS -->
         <div class="projects-container">
             <div class="section-header" style="padding:0 0 10px 0; border-bottom:1px solid var(--border-color)">📌 Active Projects</div>
-            
-            <ul class="task-list">
-                <li class="task-item">
-                    <strong>Σχεδιασμός UI Workspace</strong>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:3px;">Να φτιαχτεί η βασική HTML/CSS δομή.</p>
-                    <span class="task-status status-done">✔ Ολοκληρώθηκε</span>
-                </li>
-                <li class="task-item">
-                    <strong>Σύνδεση με Βάση Δεδομένων</strong>
-                    <p style="color:var(--text-muted); font-size:0.85rem; margin-top:3px;">Για να αποθηκεύονται τα μηνύματα του chat live.</p>
-                    <span class="task-status status-todo">⏳ Σε εκκρεμότητα</span>
-                </li>
-            </ul>
+            <p style="margin-top: 15px; color: var(--text-muted); font-size: 0.9rem;">Βάση Δεδομένων: Supabase PostgreSQL ⚡</p>
         </div>
     </main>
 
-    <!-- Απλό JavaScript για να λειτουργεί η αποστολή μηνύματος στην οθόνη (τοπικά) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        function sendMessage() {
+        // ⚠️ ΑΝΤΙΚΑΤΑΣΤΗΣΕ ΤΑ ΠΑΡΑΚΑΤΩ ΜΕ ΤΑ ΔΙΚΑ ΣΟΥ ΣΤΟΙΧΕΙΑ ΑΠΟ ΤΟ SUPABASE SETTINGS -> API
+        const SUPABASE_URL = "YOUR_SUPABASE_URL";
+        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Ρύθμιση Username (Ζητάει όνομα την πρώτη φορά)
+        let myName = localStorage.getItem('chat_username');
+        if (!myName) {
+            myName = prompt("Δώσε το μικρό σου όνομα για το chat:") || "Anonymous";
+            localStorage.setItem('chat_username', myName);
+        }
+
+        // Συνάρτηση για να εμφανίζεται ένα μήνυμα στο UI
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const isMine = sender === myName;
+            const messageClass = isMine ? 'message mine' : 'message other';
+            
+            const newMessage = document.createElement('div');
+            newMessage.className = messageClass;
+            newMessage.innerHTML = `<span class="meta">${sender}</span>${text}`;
+            
+            chatMessages.appendChild(newMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto scroll down
+        }
+
+        // 1. Φόρτωση παλιών μηνυμάτων κατά το άνοιγμα της σελίδας
+        async function loadMessages() {
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (!error && data) {
+                data.forEach(msg => {
+                    appendMessage(msg.sender, msg.text);
+                });
+            }
+        }
+        loadMessages();
+
+        // 2. Λειτουργία Αποστολής Μηνύματος (Insert στη PostgreSQL)
+        async function sendMessage() {
             const input = document.getElementById('messageInput');
             const messageText = input.value.trim();
             
             if (messageText !== '') {
-                const chatMessages = document.getElementById('chatMessages');
+                const { error } = await supabase
+                    .from('messages')
+                    .insert([{ sender: myName, text: messageText }]);
                 
-                // Δημιουργία νέου μηνύματος
-                const newMessage = document.createElement('div');
-                newMessage.className = 'message outgoing';
-                newMessage.innerHTML = `<span class="meta">Εσύ • Τώρα</span>${messageText}`;
-                
-                chatMessages.appendChild(newMessage);
-                input.value = ''; // Καθαρισμός input
-                
-                // Αυτόματο scroll προς τα κάτω
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                if (error) console.error("Error sending message:", error);
+                input.value = '';
             }
         }
 
-        // Αποστολή και με το πάτημα του Enter
+        // 3. REAL-TIME ΑΚΡΟΑΣΗ (Ακούει για νέα inserts στον πίνακα messages)
+        supabase
+            .channel('public:messages')
+            .on('postgres_changes', { event: 'INSERT', scheme: 'public', table: 'messages' }, payload => {
+                const newMsg = payload.new;
+                appendMessage(newMsg.sender, newMsg.text);
+            })
+            .subscribe();
+
+        // Αποστολή με το Enter
         document.getElementById('messageInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendMessage();
