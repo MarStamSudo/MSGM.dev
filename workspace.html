@@ -12,13 +12,16 @@
             --layer1:    #0f1512;
             --layer2:    #131b17;
             --layer3:    #1a2620;
-            --green:     #39ff88;
-            --green-lo:  #39ff8818;
-            --green-dim: #39ff8855;
-            --red:       #ff5c5c;
-            --amber:     #ffb347;
-            --text:      #d8f5e3;
-            --muted:     #5c7a6a;
+            --green:     #6fd9ac;
+            --green-lo:  #6fd9ac14;
+            --green-dim: #6fd9ac3a;
+            --red:       #e57373;
+            --amber:     #e0b872;
+            --blue:      #7fb0d9;
+            --purple:    #a894d9;
+            --pink:      #d98fb0;
+            --text:      #d3e8dc;
+            --muted:     #62796f;
             --border:    #1e2b24;
             --font:      'JetBrains Mono', monospace;
         }
@@ -39,8 +42,8 @@
             content: '';
             position: fixed; inset: 0;
             background-image:
-                linear-gradient(rgba(57,255,136,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(57,255,136,0.025) 1px, transparent 1px);
+                linear-gradient(rgba(111,217,172,0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111,217,172,0.018) 1px, transparent 1px);
             background-size: 32px 32px;
             pointer-events: none;
             z-index: 0;
@@ -587,8 +590,8 @@
         .toast-title { font-weight: 600; color: var(--green); margin-bottom: 2px; font-size: 0.78rem; }
         .toast-body  { color: var(--muted); }
 
-        /* Mood selector */
-        .mood-row {
+        /* Category filter chips */
+        .category-row {
             display: flex;
             gap: 6px;
             padding: 10px 16px;
@@ -596,22 +599,58 @@
             flex-wrap: wrap;
         }
 
-        .mood-btn {
+        .cat-btn {
             background: var(--layer2);
             border: 1px solid var(--border);
             border-radius: 4px;
-            padding: 4px 9px;
+            padding: 4px 10px;
             font-size: 0.72rem;
             cursor: pointer;
             color: var(--muted);
             transition: all 0.15s;
             font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .mood-btn:hover, .mood-btn.active {
+        .cat-btn .cat-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
             border-color: var(--green);
-            color: var(--green);
+            color: var(--text);
             background: var(--green-lo);
+        }
+
+        /* Category tag on project card */
+        .proj-cat-tag {
+            font-size: 0.62rem;
+            padding: 2px 7px;
+            border-radius: 20px;
+            letter-spacing: 0.03em;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .proj-cat-tag .cat-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+        }
+
+        select.proj-input {
+            flex: 0 0 140px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2362796f'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 28px;
         }
 
         .empty-state {
@@ -656,8 +695,6 @@
             <span id="onlineCount">connecting...</span>
         </div>
 
-        <div class="mood-row" id="moodRow"></div>
-
         <div class="messages-area" id="messagesArea">
             <div class="date-divider">σήμερα</div>
         </div>
@@ -678,6 +715,7 @@
                 <h2>▤ Projects</h2>
                 <span style="font-size:0.75rem; color:var(--muted)" id="projCount">0 active</span>
             </div>
+            <div class="category-row" id="categoryRow"></div>
             <div class="projects-grid" id="projectsGrid">
                 <div class="empty-state">
                     <span class="empty-icon">▤</span>
@@ -686,6 +724,7 @@
             </div>
             <div class="create-project-bar">
                 <input class="proj-input" id="projInput" placeholder="Όνομα νέου project...">
+                <select class="proj-input" id="projCategory"></select>
                 <button class="add-btn" onclick="createProject()">+ Προσθήκη</button>
             </div>
         </div>
@@ -758,27 +797,6 @@ function showToast(title, body) {
 }
 
 /* ════════════════════════════════════
-   MOOD BAR
-════════════════════════════════════ */
-const MOODS = ['coding', 'focused', 'gaming', 'break', 'afk', 'shipping'];
-const moodRow = document.getElementById('moodRow');
-
-let myMood = localStorage.getItem('chat_mood') || '';
-
-MOODS.forEach(m => {
-    const btn = document.createElement('button');
-    btn.className = 'mood-btn' + (myMood === m ? ' active' : '');
-    btn.textContent = m;
-    btn.onclick = () => {
-        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        myMood = m;
-        localStorage.setItem('chat_mood', m);
-    };
-    moodRow.appendChild(btn);
-});
-
-/* ════════════════════════════════════
    CHAT
 ════════════════════════════════════ */
 const messagesArea = document.getElementById('messagesArea');
@@ -804,7 +822,6 @@ function appendMessage(sender, text, id, ts, isNew = false) {
             <div class="msg-meta">
                 <span class="msg-name">${escHtml(sender)}</span>
                 <span class="msg-time">${timeStr}</span>
-                ${myMood && isMine ? `<span style="font-size:0.68rem;color:var(--muted)">${myMood}</span>` : ''}
             </div>
             <div class="msg-text">${escHtml(text)}</div>
         </div>
@@ -883,7 +900,27 @@ db.channel('public:messages')
       }
   }).subscribe();
 
-document.getElementById('onlineCount').textContent = '● online';
+/* ════════════════════════════════════
+   PRESENCE (real online count)
+════════════════════════════════════ */
+const presenceChannel = db.channel('presence:workspace', {
+    config: { presence: { key: myName } }
+});
+
+function updateOnlineFromPresence() {
+    const state = presenceChannel.presenceState();
+    const count = Object.keys(state).length;
+    const el = document.getElementById('onlineCount');
+    el.textContent = count > 1 ? `● ${count} online` : '● online (solo)';
+}
+
+presenceChannel
+    .on('presence', { event: 'sync' }, updateOnlineFromPresence)
+    .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+            await presenceChannel.track({ user: myName, online_at: Date.now() });
+        }
+    });
 
 /* ════════════════════════════════════
    EMOJI QUICK INSERT
@@ -945,10 +982,60 @@ function insertEmoji() {
 }
 
 /* ════════════════════════════════════
+   PROJECT CATEGORIES
+════════════════════════════════════ */
+const CATEGORIES = {
+    general:  { label: 'general',  color: 'var(--muted)' },
+    web:      { label: 'web',      color: 'var(--blue)' },
+    mobile:   { label: 'mobile',   color: 'var(--purple)' },
+    hardware: { label: 'hardware', color: 'var(--amber)' },
+    business: { label: 'business', color: 'var(--pink)' },
+    security: { label: 'security', color: 'var(--green)' }
+};
+let activeCategory = 'all';
+
+// Populate the create-project category select
+const projCategorySelect = document.getElementById('projCategory');
+Object.entries(CATEGORIES).forEach(([key, c]) => {
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = c.label;
+    projCategorySelect.appendChild(opt);
+});
+
+// Populate the filter chip row
+const categoryRow = document.getElementById('categoryRow');
+function renderCategoryFilters() {
+    categoryRow.innerHTML = '';
+    const allBtn = document.createElement('button');
+    allBtn.className = 'cat-btn' + (activeCategory === 'all' ? ' active' : '');
+    allBtn.textContent = 'all';
+    allBtn.onclick = () => { activeCategory = 'all'; renderCategoryFilters(); applyCategoryFilter(); };
+    categoryRow.appendChild(allBtn);
+
+    Object.entries(CATEGORIES).forEach(([key, c]) => {
+        const btn = document.createElement('button');
+        btn.className = 'cat-btn' + (activeCategory === key ? ' active' : '');
+        btn.innerHTML = `<span class="cat-dot" style="background:${c.color}"></span>${c.label}`;
+        btn.onclick = () => { activeCategory = key; renderCategoryFilters(); applyCategoryFilter(); };
+        categoryRow.appendChild(btn);
+    });
+}
+renderCategoryFilters();
+
+function applyCategoryFilter() {
+    document.querySelectorAll('.proj-card').forEach(card => {
+        const match = activeCategory === 'all' || card.dataset.category === activeCategory;
+        card.style.display = match ? '' : 'none';
+    });
+}
+
+/* ════════════════════════════════════
    PROJECTS
 ════════════════════════════════════ */
 const PROJ_ICONS = ['▹', '◆', '■', '▲', '●', '◈', '○', '▣'];
 let projCount = 0;
+let categoryColumnMissing = false; // set true after first failed insert w/ category
 
 function randomProgress() { return Math.floor(Math.random() * 80) + 10; }
 function randomIcon()     { return PROJ_ICONS[Math.floor(Math.random() * PROJ_ICONS.length)]; }
@@ -966,14 +1053,20 @@ function renderProjectCard(proj) {
     const progress = proj.progress || randomProgress();
     const icon     = proj.icon     || randomIcon();
     const date     = proj.created_at ? formatDate(proj.created_at) : 'τώρα';
+    const catKey   = CATEGORIES[proj.category] ? proj.category : 'general';
+    const cat      = CATEGORIES[catKey];
 
     const card = document.createElement('div');
     card.className = 'proj-card';
     card.dataset.id = proj.id || '';
+    card.dataset.category = catKey;
     card.innerHTML = `
         <div class="proj-card-top">
             <div class="proj-icon">${icon}</div>
             <span class="proj-status">ACTIVE</span>
+        </div>
+        <div class="proj-cat-tag" style="color:${cat.color}; border:1px solid ${cat.color}55; background:${cat.color}14;">
+            <span class="cat-dot" style="background:${cat.color}"></span>${cat.label}
         </div>
         <div class="proj-title">${escHtml(proj.title)}</div>
         <div class="proj-desc">dev project · msgm_base</div>
@@ -991,6 +1084,7 @@ function renderProjectCard(proj) {
     `;
 
     grid.appendChild(card);
+    applyCategoryFilter();
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -1033,15 +1127,23 @@ async function createProject() {
     const title = input.value.trim();
     if (!title) return;
 
-    const { data, error } = await db.from('projects').insert([{
-        title,
-        status: 'Active',
-        icon: randomIcon(),
-        progress: randomProgress()
-    }]).select().single();
+    const category = projCategorySelect.value || 'general';
+    const base = { title, status: 'Active', icon: randomIcon(), progress: randomProgress() };
+
+    let { data, error } = await db.from('projects')
+        .insert([categoryColumnMissing ? base : { ...base, category }])
+        .select().single();
+
+    // If the 'category' column doesn't exist yet in Supabase, retry without it
+    if (error && !categoryColumnMissing && /column .*category.* does not exist/i.test(error.message || '')) {
+        categoryColumnMissing = true;
+        ({ data, error } = await db.from('projects').insert([base]).select().single());
+        if (!error) showToast('⚠ Σημείωση', 'Πρόσθεσε στήλη "category" (text) στο Supabase για να αποθηκεύονται οι κατηγορίες.');
+    }
 
     if (!error && data) {
         input.value = '';
+        if (!data.category) data.category = category; // reflect locally even if column missing
         showToast('▤ Νέο Project', `"${title}" δημιουργήθηκε!`);
     }
 }
@@ -1092,7 +1194,6 @@ showToast(`> ${myName}`, 'session initialized.');
 
 function logout() {
     localStorage.removeItem('chat_username');
-    localStorage.removeItem('chat_mood');
     location.reload();
 }
 </script>
