@@ -3,56 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSGM</title>
+    <title>MSGM_BASE // workspace</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:        #06060f;
-            --layer1:    #0d0d1f;
-            --layer2:    #12122a;
-            --layer3:    #1a1a35;
-            --violet:    #7c3aed;
-            --violet-lo: #7c3aed22;
-            --cyan:      #00f5ff;
-            --cyan-lo:   #00f5ff18;
-            --magenta:   #ff006e;
-            --mag-lo:    #ff006e18;
-            --white:     #f0f0ff;
-            --muted:     #6b7280;
-            --border:    #1e1e40;
-            --font-ui:   'Space Grotesk', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --bg:        #0a0e0c;
+            --layer1:    #0f1512;
+            --layer2:    #131b17;
+            --layer3:    #1a2620;
+            --green:     #39ff88;
+            --green-lo:  #39ff8818;
+            --green-dim: #39ff8855;
+            --red:       #ff5c5c;
+            --amber:     #ffb347;
+            --text:      #d8f5e3;
+            --muted:     #5c7a6a;
+            --border:    #1e2b24;
+            --font:      'JetBrains Mono', monospace;
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: var(--font-ui);
+            font-family: var(--font);
             background: var(--bg);
-            color: var(--white);
+            color: var(--text);
             height: 100vh;
             overflow: hidden;
             display: flex;
         }
 
-        /* ── PARTICLE CANVAS ── */
-        #particles {
+        /* faint grid texture */
+        body::before {
+            content: '';
             position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(57,255,136,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(57,255,136,0.025) 1px, transparent 1px);
+            background-size: 32px 32px;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.5;
         }
 
         /* ── SIDEBAR ── */
         aside {
-            width: 72px;
+            width: 64px;
             background: var(--layer1);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 0;
+            padding: 18px 0;
             gap: 8px;
             position: relative;
             z-index: 10;
@@ -60,81 +62,78 @@
         }
 
         .logo {
-            width: 42px; height: 42px;
-            background: linear-gradient(135deg, var(--violet), var(--cyan));
-            border-radius: 12px;
+            width: 36px; height: 36px;
+            border: 1px solid var(--green);
+            border-radius: 6px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px var(--violet);
-            animation: logoPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes logoPulse {
-            0%, 100% { box-shadow: 0 0 15px var(--violet); }
-            50%       { box-shadow: 0 0 30px var(--cyan), 0 0 60px var(--violet); }
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 18px;
         }
 
         .nav-btn {
-            width: 44px; height: 44px;
+            width: 40px; height: 40px;
             border: 1px solid transparent;
-            border-radius: 10px;
+            border-radius: 6px;
             background: transparent;
             color: var(--muted);
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.2s;
+            font-size: 1.05rem;
+            transition: all 0.15s;
             position: relative;
+            font-family: var(--font);
         }
 
-        .nav-btn:hover { background: var(--layer2); color: var(--white); border-color: var(--border); }
+        .nav-btn:hover { background: var(--layer2); color: var(--text); border-color: var(--border); }
 
         .nav-btn.active {
-            background: var(--violet-lo);
-            color: var(--cyan);
-            border-color: var(--violet);
+            background: var(--green-lo);
+            color: var(--green);
+            border-color: var(--green);
         }
 
         .nav-btn .badge {
             position: absolute;
-            top: 6px; right: 6px;
-            width: 8px; height: 8px;
-            background: var(--magenta);
+            top: 4px; right: 4px;
+            width: 6px; height: 6px;
+            background: var(--amber);
             border-radius: 50%;
             border: 2px solid var(--bg);
             animation: blink 2s ease-in-out infinite;
         }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .nav-spacer { flex: 1; }
 
         .avatar-btn {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--magenta), var(--violet));
-            border: 2px solid var(--border);
+            width: 40px; height: 40px;
+            border-radius: 6px;
+            background: var(--layer2);
+            border: 1px solid var(--border);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--green);
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.15s;
             position: relative;
+            font-family: var(--font);
         }
 
         .avatar-btn::after {
             content: '';
             position: absolute;
             bottom: 2px; right: 2px;
-            width: 10px; height: 10px;
-            background: #22c55e;
+            width: 8px; height: 8px;
+            background: var(--green);
             border-radius: 50%;
             border: 2px solid var(--layer1);
         }
 
-        .avatar-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--violet); }
+        .avatar-btn:hover { border-color: var(--green); }
 
         /* ── MAIN LAYOUT ── */
         #app {
@@ -145,43 +144,40 @@
             z-index: 10;
         }
 
-        /* ── PANELS ── */
         .panel { display: none; flex: 1; }
         .panel.active { display: flex; }
 
         /* ── CHAT PANEL ── */
-        #panel-chat {
-            flex-direction: column;
-        }
+        #panel-chat { flex-direction: column; }
 
         .chat-header {
-            padding: 18px 24px;
+            padding: 14px 22px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: var(--layer1);
             flex-shrink: 0;
         }
 
         .channel-indicator {
-            width: 10px; height: 10px;
-            background: var(--cyan);
+            width: 8px; height: 8px;
+            background: var(--green);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--cyan);
+            box-shadow: 0 0 6px var(--green);
             animation: blink 2s infinite;
         }
 
-        .chat-header h2 { font-size: 1rem; font-weight: 600; }
-        .chat-header span { font-size: 0.8rem; color: var(--muted); margin-left: auto; font-family: var(--font-mono); }
+        .chat-header h2 { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; }
+        .chat-header span { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
 
         .messages-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 24px;
+            padding: 18px 22px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
             background: var(--bg);
         }
 
@@ -189,16 +185,14 @@
         .messages-area::-webkit-scrollbar-track { background: transparent; }
         .messages-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-        /* Date divider */
         .date-divider {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 16px 0 8px;
+            margin: 14px 0 8px;
             color: var(--muted);
-            font-size: 0.72rem;
-            font-family: var(--font-mono);
-            letter-spacing: 0.05em;
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
         }
         .date-divider::before, .date-divider::after {
             content: '';
@@ -207,33 +201,28 @@
             background: var(--border);
         }
 
-        /* Message row */
         .msg-row {
             display: flex;
             gap: 10px;
             padding: 4px 0;
-            border-radius: 8px;
-            transition: background 0.15s;
+            border-radius: 4px;
+            transition: background 0.1s;
         }
         .msg-row:hover { background: var(--layer1); padding-left: 6px; margin-left: -6px; }
 
         .msg-avatar {
-            width: 32px; height: 32px;
-            border-radius: 8px;
+            width: 28px; height: 28px;
+            border-radius: 4px;
             flex-shrink: 0;
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 600;
+            font-weight: 700;
             margin-top: 2px;
+            border: 1px solid var(--border);
         }
 
-        .msg-avatar.is-mine {
-            background: linear-gradient(135deg, var(--violet), var(--cyan));
-        }
-
-        .msg-avatar.is-other {
-            background: linear-gradient(135deg, var(--magenta), var(--violet));
-        }
+        .msg-avatar.is-mine { color: var(--green); border-color: var(--green-dim); background: var(--green-lo); }
+        .msg-avatar.is-other { color: var(--amber); border-color: #ffb34755; background: #ffb34712; }
 
         .msg-body { flex: 1; }
 
@@ -241,50 +230,35 @@
             display: flex;
             align-items: baseline;
             gap: 8px;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
-        .msg-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+        .msg-name { font-size: 0.8rem; font-weight: 600; }
+        .is-mine .msg-name { color: var(--green); }
+        .is-other .msg-name { color: var(--amber); }
 
-        .is-mine .msg-name { color: var(--cyan); }
-        .is-other .msg-name { color: var(--magenta); }
+        .msg-time { font-size: 0.65rem; color: var(--muted); }
 
-        .msg-time {
-            font-size: 0.7rem;
-            color: var(--muted);
-            font-family: var(--font-mono);
-        }
+        .msg-text { font-size: 0.86rem; line-height: 1.5; color: var(--text); }
 
-        .msg-text {
-            font-size: 0.92rem;
-            line-height: 1.5;
-            color: #d4d4f0;
-        }
-
-        /* New message animation */
         @keyframes msgIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .msg-row.new { animation: msgIn 0.3s ease; }
+        .msg-row.new { animation: msgIn 0.25s ease; }
 
-        /* Typing indicator */
         .typing-bar {
-            padding: 6px 24px;
-            font-size: 0.75rem;
+            padding: 4px 22px;
+            font-size: 0.7rem;
             color: var(--muted);
-            font-style: italic;
-            min-height: 26px;
+            min-height: 22px;
             background: var(--bg);
         }
 
         .typing-dots span {
             display: inline-block;
-            width: 4px; height: 4px;
-            background: var(--cyan);
+            width: 3px; height: 3px;
+            background: var(--green);
             border-radius: 50%;
             margin: 0 1px;
             animation: dotBounce 1.4s infinite;
@@ -294,66 +268,62 @@
 
         @keyframes dotBounce {
             0%, 80%, 100% { transform: translateY(0); }
-            40%            { transform: translateY(-6px); }
+            40%            { transform: translateY(-4px); }
         }
 
-        /* Input bar */
         .input-bar {
-            padding: 16px 24px;
+            padding: 14px 22px;
             border-top: 1px solid var(--border);
             background: var(--layer1);
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .emoji-btn {
-            width: 36px; height: 36px;
+            width: 34px; height: 34px;
             background: transparent;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 4px;
             color: var(--muted);
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
+            font-size: 0.9rem;
+            transition: all 0.15s;
             display: flex; align-items: center; justify-content: center;
         }
-        .emoji-btn:hover { border-color: var(--violet); color: var(--white); }
+        .emoji-btn:hover { border-color: var(--green); color: var(--green); }
 
         .msg-input {
             flex: 1;
             background: var(--layer2);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 16px;
-            color: var(--white);
-            font-family: var(--font-ui);
-            font-size: 0.92rem;
+            border-radius: 4px;
+            padding: 9px 14px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.86rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.15s;
         }
-        .msg-input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px var(--violet-lo); }
-        .msg-input::placeholder { color: var(--muted); }
+        .msg-input:focus { border-color: var(--green); box-shadow: 0 0 0 1px var(--green-dim); }
+        .msg-input::placeholder { color: #33453b; }
 
         .send-btn {
-            width: 36px; height: 36px;
-            background: linear-gradient(135deg, var(--violet), var(--cyan));
-            border: none;
-            border-radius: 8px;
-            color: var(--bg);
+            width: 34px; height: 34px;
+            background: transparent;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            color: var(--green);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
-        .send-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--violet); }
+        .send-btn:hover { background: var(--green); color: var(--bg); }
         .send-btn:active { transform: scale(0.95); }
 
         /* ── PROJECTS PANEL ── */
-        #panel-projects {
-            display: none;
-            gap: 0;
-        }
+        #panel-projects { display: none; gap: 0; }
         #panel-projects.active { display: flex; }
 
         .projects-main {
@@ -365,7 +335,7 @@
         }
 
         .projects-header {
-            padding: 18px 24px;
+            padding: 14px 22px;
             border-bottom: 1px solid var(--border);
             background: var(--layer1);
             display: flex;
@@ -374,15 +344,15 @@
             flex-shrink: 0;
         }
 
-        .projects-header h2 { font-size: 1rem; font-weight: 600; }
+        .projects-header h2 { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; }
 
         .projects-grid {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 24px;
+            padding: 18px 22px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 14px;
             align-content: start;
         }
 
@@ -392,37 +362,18 @@
         .proj-card {
             background: var(--layer1);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
+            border-radius: 6px;
+            padding: 18px;
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.25s;
-            animation: cardIn 0.4s ease;
-        }
-
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .proj-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--violet), var(--cyan));
-            opacity: 0;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
 
         .proj-card:hover {
-            border-color: var(--violet);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px #7c3aed22;
+            border-color: var(--green);
+            box-shadow: 0 0 20px var(--green-lo);
         }
-
-        .proj-card:hover::before { opacity: 1; }
 
         .proj-card-top {
             display: flex;
@@ -432,54 +383,39 @@
         }
 
         .proj-icon {
-            width: 40px; height: 40px;
-            border-radius: 10px;
-            background: var(--violet-lo);
-            border: 1px solid var(--violet);
+            width: 34px; height: 34px;
+            border-radius: 4px;
+            background: var(--green-lo);
+            border: 1px solid var(--green-dim);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--green);
         }
 
         .proj-status {
-            font-size: 0.72rem;
-            font-family: var(--font-mono);
-            padding: 4px 8px;
+            font-size: 0.65rem;
+            padding: 3px 8px;
             border-radius: 20px;
-            background: #22c55e18;
-            color: #22c55e;
-            border: 1px solid #22c55e40;
+            background: var(--green-lo);
+            color: var(--green);
+            border: 1px solid var(--green-dim);
+            letter-spacing: 0.04em;
         }
 
-        .proj-status.paused {
-            background: #f59e0b18;
-            color: #f59e0b;
-            border-color: #f59e0b40;
-        }
+        .proj-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; }
 
-        .proj-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .proj-desc {
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
+        .proj-desc { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
 
         .proj-progress-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             color: var(--muted);
-            margin-bottom: 6px;
-            font-family: var(--font-mono);
+            margin-bottom: 5px;
         }
 
         .proj-progress-bar {
-            height: 4px;
+            height: 3px;
             background: var(--layer3);
             border-radius: 2px;
             overflow: hidden;
@@ -487,79 +423,73 @@
 
         .proj-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--violet), var(--cyan));
+            background: var(--green);
             border-radius: 2px;
-            transition: width 0.6s ease;
+            transition: width 0.5s ease;
         }
 
         .proj-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 14px;
-            padding-top: 14px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid var(--border);
         }
 
-        .proj-date {
-            font-size: 0.72rem;
-            color: var(--muted);
-            font-family: var(--font-mono);
-        }
+        .proj-date { font-size: 0.68rem; color: var(--muted); }
 
         .proj-delete {
             background: none;
             border: none;
             color: var(--muted);
             cursor: pointer;
-            font-size: 0.85rem;
-            padding: 4px 6px;
-            border-radius: 6px;
+            font-size: 0.8rem;
+            padding: 3px 5px;
+            border-radius: 4px;
             transition: all 0.15s;
         }
-        .proj-delete:hover { color: var(--magenta); background: var(--mag-lo); }
+        .proj-delete:hover { color: var(--red); }
 
-        /* Create project input */
         .create-project-bar {
-            padding: 16px 24px;
+            padding: 14px 22px;
             border-top: 1px solid var(--border);
             background: var(--layer1);
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .proj-input {
             flex: 1;
             background: var(--layer2);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 16px;
-            color: var(--white);
-            font-family: var(--font-ui);
-            font-size: 0.92rem;
+            border-radius: 4px;
+            padding: 9px 14px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.86rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.15s;
         }
-        .proj-input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px var(--violet-lo); }
-        .proj-input::placeholder { color: var(--muted); }
+        .proj-input:focus { border-color: var(--green); box-shadow: 0 0 0 1px var(--green-dim); }
+        .proj-input::placeholder { color: #33453b; }
 
         .add-btn {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--violet), var(--cyan));
-            border: none;
-            border-radius: 10px;
-            color: var(--bg);
-            font-family: var(--font-ui);
+            padding: 9px 18px;
+            background: transparent;
+            border: 1px solid var(--green);
+            border-radius: 4px;
+            color: var(--green);
+            font-family: var(--font);
             font-weight: 600;
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
-        .add-btn:hover { transform: scale(1.03); box-shadow: 0 0 20px var(--violet); }
+        .add-btn:hover { background: var(--green); color: var(--bg); }
 
-        /* Projects Sidebar */
         .projects-sidebar {
-            width: 240px;
+            width: 220px;
             background: var(--layer1);
             border-left: 1px solid var(--border);
             display: flex;
@@ -568,121 +498,100 @@
         }
 
         .sidebar-head {
-            padding: 18px 16px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-            font-family: var(--font-mono);
+            font-size: 0.7rem;
             color: var(--muted);
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
 
-        .sidebar-proj-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
+        .sidebar-proj-list { flex: 1; overflow-y: auto; padding: 8px; }
 
         .sidebar-proj-item {
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 9px 10px;
+            border-radius: 4px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 9px;
             cursor: pointer;
-            transition: background 0.15s;
-            margin-bottom: 2px;
+            transition: background 0.1s;
+            margin-bottom: 1px;
         }
-
         .sidebar-proj-item:hover { background: var(--layer2); }
 
         .sidebar-proj-dot {
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             border-radius: 50%;
-            background: var(--cyan);
+            background: var(--green);
             flex-shrink: 0;
         }
 
-        .sidebar-proj-name {
-            font-size: 0.85rem;
-            color: #b0b0d0;
-        }
+        .sidebar-proj-name { font-size: 0.8rem; color: var(--text); }
 
-        /* Stats sidebar panel */
         .stats-sidebar {
-            padding: 16px;
+            padding: 14px;
             border-top: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .stat-item {
             background: var(--layer2);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 4px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--muted);
-            font-family: var(--font-mono);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 4px;
+            letter-spacing: 0.05em;
+            margin-bottom: 3px;
         }
 
-        .stat-value {
-            font-size: 1.4rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--violet), var(--cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .stat-value { font-size: 1.2rem; font-weight: 700; color: var(--green); }
 
         /* ── NOTIFICATIONS ── */
         #toast-container {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 16px; right: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             z-index: 1000;
         }
 
         .toast {
             background: var(--layer2);
             border: 1px solid var(--border);
-            border-left: 3px solid var(--cyan);
-            border-radius: 10px;
-            padding: 12px 16px;
-            min-width: 260px;
-            max-width: 320px;
-            font-size: 0.85rem;
-            box-shadow: 0 8px 32px #0005;
-            animation: toastIn 0.3s ease;
+            border-left: 2px solid var(--green);
+            border-radius: 4px;
+            padding: 10px 14px;
+            min-width: 240px;
+            max-width: 300px;
+            font-size: 0.8rem;
+            box-shadow: 0 8px 24px #0007;
+            animation: toastIn 0.25s ease;
         }
 
         @keyframes toastIn {
-            from { opacity: 0; transform: translateX(20px); }
+            from { opacity: 0; transform: translateX(16px); }
             to   { opacity: 1; transform: translateX(0); }
         }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(16px); } }
+        .toast.leaving { animation: toastOut 0.25s ease forwards; }
 
-        @keyframes toastOut {
-            to { opacity: 0; transform: translateX(20px); }
-        }
-
-        .toast.leaving { animation: toastOut 0.3s ease forwards; }
-
-        .toast-title { font-weight: 600; color: var(--cyan); margin-bottom: 3px; }
+        .toast-title { font-weight: 600; color: var(--green); margin-bottom: 2px; font-size: 0.78rem; }
         .toast-body  { color: var(--muted); }
 
         /* Mood selector */
         .mood-row {
             display: flex;
             gap: 6px;
-            padding: 12px 16px;
+            padding: 10px 16px;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
         }
@@ -690,107 +599,50 @@
         .mood-btn {
             background: var(--layer2);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 4px 10px;
-            font-size: 0.8rem;
+            border-radius: 4px;
+            padding: 4px 9px;
+            font-size: 0.72rem;
             cursor: pointer;
             color: var(--muted);
             transition: all 0.15s;
-            font-family: var(--font-ui);
+            font-family: var(--font);
         }
 
         .mood-btn:hover, .mood-btn.active {
-            border-color: var(--violet);
-            color: var(--white);
-            background: var(--violet-lo);
+            border-color: var(--green);
+            color: var(--green);
+            background: var(--green-lo);
         }
 
-        /* Empty state */
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 60px 20px;
+            padding: 50px 20px;
             color: var(--muted);
         }
+        .empty-state .empty-icon { font-size: 2rem; margin-bottom: 12px; display: block; opacity: 0.6; }
+        .empty-state p { font-size: 0.85rem; line-height: 1.5; }
 
-        .empty-state .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        .empty-state p { font-size: 0.9rem; }
-
-        /* ── GLOW EFFECTS ── */
-        .glow-violet { text-shadow: 0 0 20px var(--violet); }
-        .glow-cyan   { text-shadow: 0 0 20px var(--cyan); }
-
-        /* ── SCROLLBAR GLOBAL ── */
         * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
-        /* Responsive */
         @media (max-width: 700px) {
             .projects-sidebar { display: none; }
             .projects-grid { grid-template-columns: 1fr; }
         }
-
-        /* Ambient glow blobs */
-        .blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.06;
-            pointer-events: none;
-            z-index: 0;
-            animation: blobMove 12s ease-in-out infinite alternate;
-        }
-
-        .blob-1 {
-            width: 500px; height: 500px;
-            background: var(--violet);
-            top: -100px; left: -100px;
-        }
-
-        .blob-2 {
-            width: 400px; height: 400px;
-            background: var(--cyan);
-            bottom: -100px; right: 100px;
-            animation-delay: -4s;
-        }
-
-        .blob-3 {
-            width: 300px; height: 300px;
-            background: var(--magenta);
-            top: 40%; left: 40%;
-            animation-delay: -8s;
-        }
-
-        @keyframes blobMove {
-            from { transform: translate(0, 0) scale(1); }
-            to   { transform: translate(40px, 30px) scale(1.1); }
-        }
     </style>
 </head>
 <body>
-
-<!-- Ambient blobs -->
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
-
-<!-- Particle canvas -->
-<canvas id="particles"></canvas>
 
 <!-- Toast container -->
 <div id="toast-container"></div>
 
 <!-- Sidebar nav -->
 <aside>
-    <div class="logo" title="SupaRoom">⚡</div>
-    <button class="nav-btn active" id="nav-chat" onclick="switchPanel('chat')" title="Chat">💬 <span class="badge"></span></button>
-    <button class="nav-btn" id="nav-projects" onclick="switchPanel('projects')" title="Projects">📁</button>
+    <div class="logo" title="MSGM_BASE">M</div>
+    <button class="nav-btn active" id="nav-chat" onclick="switchPanel('chat')" title="Chat">#<span class="badge"></span></button>
+    <button class="nav-btn" id="nav-projects" onclick="switchPanel('projects')" title="Projects">▤</button>
     <div class="nav-spacer"></div>
-    <button class="avatar-btn" onclick="logout()" title="Αποσύνδεση" id="myAvatar">👤</button>
+    <button class="avatar-btn" onclick="logout()" title="Αποσύνδεση" id="myAvatar">--</button>
 </aside>
 
 <!-- Main app -->
@@ -801,7 +653,7 @@
         <div class="chat-header">
             <div class="channel-indicator"></div>
             <h2># general</h2>
-            <span id="onlineCount">● 0 online</span>
+            <span id="onlineCount">connecting...</span>
         </div>
 
         <div class="mood-row" id="moodRow"></div>
@@ -813,7 +665,7 @@
         <div class="typing-bar" id="typingBar"></div>
 
         <div class="input-bar">
-            <button class="emoji-btn" onclick="insertEmoji()" title="Emoji">😊</button>
+            <button class="emoji-btn" onclick="insertEmoji()" title="Emoji">☺</button>
             <input class="msg-input" id="msgInput" placeholder="Γράψε κάτι..." autocomplete="off">
             <button class="send-btn" onclick="sendMessage()" title="Αποστολή">➤</button>
         </div>
@@ -823,12 +675,12 @@
     <div class="panel" id="panel-projects">
         <div class="projects-main">
             <div class="projects-header">
-                <h2>📁 Projects</h2>
-                <span style="font-size:0.8rem; color:var(--muted); font-family:var(--font-mono)" id="projCount">0 active</span>
+                <h2>▤ Projects</h2>
+                <span style="font-size:0.75rem; color:var(--muted)" id="projCount">0 active</span>
             </div>
             <div class="projects-grid" id="projectsGrid">
                 <div class="empty-state">
-                    <span class="empty-icon">🚀</span>
+                    <span class="empty-icon">▤</span>
                     <p>Κανένα project ακόμα.<br>Πρόσθεσε το πρώτο!</p>
                 </div>
             </div>
@@ -874,82 +726,8 @@ if (!myName) {
     localStorage.setItem('chat_username', myName);
 }
 
-// Initials for avatar
 const initials = myName.slice(0, 2).toUpperCase();
 document.getElementById('myAvatar').textContent = initials;
-
-/* ════════════════════════════════════
-   PARTICLES
-════════════════════════════════════ */
-(function() {
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    let mouse = { x: -1000, y: -1000 };
-    let dots = [];
-    const N = 60;
-
-    function resize() {
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-
-    function init() {
-        resize();
-        dots = Array.from({ length: N }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.3,
-            vy: (Math.random() - 0.5) * 0.3,
-            r: Math.random() * 1.5 + 0.5
-        }));
-    }
-
-    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-    window.addEventListener('resize', resize);
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        dots.forEach(d => {
-            d.x += d.vx;
-            d.y += d.vy;
-            if (d.x < 0 || d.x > canvas.width)  d.vx *= -1;
-            if (d.y < 0 || d.y > canvas.height) d.vy *= -1;
-
-            const dist = Math.hypot(d.x - mouse.x, d.y - mouse.y);
-            if (dist < 120) {
-                d.x += (d.x - mouse.x) * 0.03;
-                d.y += (d.y - mouse.y) * 0.03;
-            }
-
-            ctx.beginPath();
-            ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-            ctx.fillStyle = '#7c3aed';
-            ctx.fill();
-        });
-
-        for (let i = 0; i < dots.length; i++) {
-            for (let j = i + 1; j < dots.length; j++) {
-                const dx = dots[i].x - dots[j].x;
-                const dy = dots[i].y - dots[j].y;
-                const d  = Math.sqrt(dx*dx + dy*dy);
-                if (d < 120) {
-                    ctx.beginPath();
-                    ctx.moveTo(dots[i].x, dots[i].y);
-                    ctx.lineTo(dots[j].x, dots[j].y);
-                    ctx.strokeStyle = `rgba(124, 58, 237, ${1 - d / 120})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
-            }
-        }
-
-        requestAnimationFrame(draw);
-    }
-
-    init();
-    draw();
-})();
 
 /* ════════════════════════════════════
    NAV
@@ -959,7 +737,6 @@ function switchPanel(name) {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`panel-${name}`).classList.add('active');
     document.getElementById(`nav-${name}`).classList.add('active');
-    // Remove chat badge
     if (name === 'chat') {
         const b = document.querySelector('#nav-chat .badge');
         if (b) b.style.display = 'none';
@@ -976,14 +753,14 @@ function showToast(title, body) {
     document.getElementById('toast-container').appendChild(t);
     setTimeout(() => {
         t.classList.add('leaving');
-        setTimeout(() => t.remove(), 350);
+        setTimeout(() => t.remove(), 300);
     }, 3500);
 }
 
 /* ════════════════════════════════════
    MOOD BAR
 ════════════════════════════════════ */
-const MOODS = ['☕ Coding', '🔥 Focused', '🎮 Gaming', '🍕 Break', '😴 AFK', '🚀 Shipping'];
+const MOODS = ['coding', 'focused', 'gaming', 'break', 'afk', 'shipping'];
 const moodRow = document.getElementById('moodRow');
 
 let myMood = localStorage.getItem('chat_mood') || '';
@@ -1027,7 +804,7 @@ function appendMessage(sender, text, id, ts, isNew = false) {
             <div class="msg-meta">
                 <span class="msg-name">${escHtml(sender)}</span>
                 <span class="msg-time">${timeStr}</span>
-                ${myMood && isMine ? `<span style="font-size:0.72rem;color:var(--muted)">${myMood}</span>` : ''}
+                ${myMood && isMine ? `<span style="font-size:0.68rem;color:var(--muted)">${myMood}</span>` : ''}
             </div>
             <div class="msg-text">${escHtml(text)}</div>
         </div>
@@ -1061,7 +838,6 @@ async function sendMessage() {
     clearTypingStatus();
 }
 
-// Typing indicator (uses localStorage broadcast — no extra table needed)
 function broadcastTyping() {
     if (!isTyping) {
         isTyping = true;
@@ -1077,7 +853,6 @@ function clearTypingStatus() {
     localStorage.removeItem('typing_user');
 }
 
-// Poll typing from localStorage (simple cross-tab trick for two-user setup)
 setInterval(() => {
     const user = localStorage.getItem('typing_user');
     const ts   = parseInt(localStorage.getItem('typing_ts') || '0');
@@ -1096,11 +871,10 @@ document.getElementById('msgInput').addEventListener('keypress', e => { if (e.ke
 db.channel('public:messages')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
       const m = payload.new;
-      // Avoid double-append on sender side
       if (!document.querySelector(`.msg-row[data-id="${m.id}"]`)) {
           appendMessage(m.sender, m.text, m.id, m.created_at, true);
           if (m.sender !== myName) {
-              showToast(`💬 ${m.sender}`, m.text.length > 50 ? m.text.slice(0, 50) + '…' : m.text);
+              showToast(`# ${m.sender}`, m.text.length > 50 ? m.text.slice(0, 50) + '…' : m.text);
               const b = document.querySelector('#nav-chat .badge');
               if (b && !document.getElementById('panel-chat').classList.contains('active')) {
                   b.style.display = '';
@@ -1109,8 +883,7 @@ db.channel('public:messages')
       }
   }).subscribe();
 
-// Online count (rough: just show both users as "2 online" when connected)
-document.getElementById('onlineCount').textContent = '● Live';
+document.getElementById('onlineCount').textContent = '● online';
 
 /* ════════════════════════════════════
    EMOJI QUICK INSERT
@@ -1128,24 +901,24 @@ function insertEmoji() {
     emojiPicker = document.createElement('div');
     emojiPicker.style.cssText = `
         position: fixed;
-        bottom: 80px;
-        left: 88px;
+        bottom: 74px;
+        left: 78px;
         background: var(--layer2);
         border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 10px;
+        border-radius: 6px;
+        padding: 8px;
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
-        width: 220px;
+        gap: 4px;
+        width: 200px;
         z-index: 100;
-        box-shadow: 0 8px 32px #0008;
-        animation: toastIn 0.15s ease;
+        box-shadow: 0 8px 24px #0009;
+        animation: toastIn 0.12s ease;
     `;
     EMOJIS.forEach(e => {
         const b = document.createElement('button');
         b.textContent = e;
-        b.style.cssText = 'font-size:1.4rem; background:none; border:none; cursor:pointer; padding:4px; border-radius:6px; transition:background 0.1s;';
+        b.style.cssText = 'font-size:1.3rem; background:none; border:none; cursor:pointer; padding:4px; border-radius:4px; transition:background 0.1s;';
         b.onmouseenter = () => b.style.background = 'var(--layer3)';
         b.onmouseleave = () => b.style.background = 'none';
         b.onclick = () => {
@@ -1174,7 +947,7 @@ function insertEmoji() {
 /* ════════════════════════════════════
    PROJECTS
 ════════════════════════════════════ */
-const PROJ_ICONS = ['🚀', '🎯', '⚡', '🛠️', '💡', '🔮', '🌐', '🧩'];
+const PROJ_ICONS = ['▹', '◆', '■', '▲', '●', '◈', '○', '▣'];
 let projCount = 0;
 
 function randomProgress() { return Math.floor(Math.random() * 80) + 10; }
@@ -1187,7 +960,6 @@ function formatDate(ts) {
 function renderProjectCard(proj) {
     const grid = document.getElementById('projectsGrid');
 
-    // Remove empty state
     const emp = grid.querySelector('.empty-state');
     if (emp) emp.remove();
 
@@ -1201,26 +973,25 @@ function renderProjectCard(proj) {
     card.innerHTML = `
         <div class="proj-card-top">
             <div class="proj-icon">${icon}</div>
-            <span class="proj-status">Active</span>
+            <span class="proj-status">ACTIVE</span>
         </div>
         <div class="proj-title">${escHtml(proj.title)}</div>
-        <div class="proj-desc">Dev project · SupaRoom</div>
+        <div class="proj-desc">dev project · msgm_base</div>
         <div class="proj-progress-label">
-            <span>Πρόοδος</span>
+            <span>progress</span>
             <span>${progress}%</span>
         </div>
         <div class="proj-progress-bar">
             <div class="proj-progress-fill" style="width:0%" data-target="${progress}"></div>
         </div>
         <div class="proj-footer">
-            <span class="proj-date">📅 ${date}</span>
-            <button class="proj-delete" onclick="deleteProject(event, '${proj.id}')">🗑</button>
+            <span class="proj-date">${date}</span>
+            <button class="proj-delete" onclick="deleteProject(event, '${proj.id}')">del</button>
         </div>
     `;
 
     grid.appendChild(card);
 
-    // Animate progress bar
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             const fill = card.querySelector('.proj-progress-fill');
@@ -1228,7 +999,6 @@ function renderProjectCard(proj) {
         });
     });
 
-    // Add to sidebar
     renderSidebarItem(proj);
     projCount++;
     updateProjStats();
@@ -1272,7 +1042,7 @@ async function createProject() {
 
     if (!error && data) {
         input.value = '';
-        showToast('📁 Νέο Project', `"${title}" δημιουργήθηκε!`);
+        showToast('▤ Νέο Project', `"${title}" δημιουργήθηκε!`);
     }
 }
 
@@ -1282,7 +1052,7 @@ async function deleteProject(e, id) {
     await db.from('projects').delete().eq('id', id);
 
     const card = document.querySelector(`.proj-card[data-id="${id}"]`);
-    if (card) { card.style.opacity = '0'; card.style.transform = 'scale(0.9)'; card.style.transition = '0.2s'; setTimeout(() => card.remove(), 200); }
+    if (card) { card.style.opacity = '0'; card.style.transform = 'scale(0.96)'; card.style.transition = '0.15s'; setTimeout(() => card.remove(), 150); }
 
     const sItem = document.querySelector(`.sidebar-proj-item[data-proj-id="${id}"]`);
     if (sItem) sItem.remove();
@@ -1291,17 +1061,16 @@ async function deleteProject(e, id) {
     updateProjStats();
 
     if (document.querySelectorAll('.proj-card').length === 0) {
-        document.getElementById('projectsGrid').innerHTML = `<div class="empty-state"><span class="empty-icon">🚀</span><p>Κανένα project.<br>Πρόσθεσε το πρώτο!</p></div>`;
+        document.getElementById('projectsGrid').innerHTML = `<div class="empty-state"><span class="empty-icon">▤</span><p>Κανένα project.<br>Πρόσθεσε το πρώτο!</p></div>`;
     }
 }
 
-// Realtime projects
 db.channel('public:projects')
   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'projects' }, payload => {
       const p = payload.new;
       if (!document.querySelector(`.proj-card[data-id="${p.id}"]`)) {
           renderProjectCard(p);
-          showToast('📁 Νέο Project', `"${p.title}" προστέθηκε!`);
+          showToast('▤ Νέο Project', `"${p.title}" προστέθηκε!`);
       }
   })
   .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'projects' }, payload => {
@@ -1319,7 +1088,7 @@ document.getElementById('projInput').addEventListener('keypress', e => { if (e.k
 ════════════════════════════════════ */
 loadMessages();
 loadProjects();
-showToast(`👋 Γεια σου, ${myName}!`, 'SupaRoom είναι έτοιμο.');
+showToast(`> ${myName}`, 'session initialized.');
 
 function logout() {
     localStorage.removeItem('chat_username');
