@@ -175,6 +175,20 @@
         .chat-header h2 { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.02em; }
         .chat-header span { font-size: 0.7rem; color: var(--muted); margin-left: auto; }
 
+        .clear-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: var(--font);
+            font-size: 0.68rem;
+            padding: 4px 9px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.15s;
+        }
+        .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -799,6 +813,7 @@
             <div class="channel-indicator"></div>
             <h2># general</h2>
             <span id="onlineCount">connecting...</span>
+            <button class="clear-btn" onclick="clearChat()" title="Διαγραφή ιστορικού chat">✕ clear</button>
         </div>
 
         <div class="messages-area" id="messagesArea">
@@ -1024,7 +1039,29 @@ db.channel('public:messages')
               }
           }
       }
+  })
+  .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
+      const id = payload.old.id;
+      const row = document.querySelector(`.msg-row[data-id="${id}"]`);
+      if (row) row.remove();
+      if (document.querySelectorAll('.msg-row').length === 0) {
+          msgTodayCount = 0;
+          document.getElementById('statMsgs').textContent = 0;
+      }
   }).subscribe();
+
+async function clearChat() {
+    if (!confirm('Σίγουρα θες να διαγράψεις όλο το ιστορικό chat; Δεν αναιρείται.')) return;
+    const { error } = await db.from('messages').delete().gte('id', 0);
+    if (!error) {
+        messagesArea.innerHTML = '<div class="date-divider">σήμερα</div>';
+        msgTodayCount = 0;
+        document.getElementById('statMsgs').textContent = 0;
+        showToast('🗑 Chat', 'Το ιστορικό διαγράφηκε.');
+    } else {
+        showToast('⚠ Σφάλμα', 'Δεν μπόρεσε να διαγραφεί το chat.');
+    }
+}
 
 /* ════════════════════════════════════
    PRESENCE (real online count)
